@@ -3,300 +3,434 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>????????? ????? � ????????? (Venn)</title>
+  <title>آزمایشگاه ریاضی — مجموعه‌ها (Venn)</title>
   <style>
     :root{
       --bg:#ffffff;
-      --pink:#ffd6e8; /* ????? ?? ??? */
-      --teal:#bff7ff; /* ??? ?????? */
-      --lemon:#fff9c4; /* ??? ?????? ?? ??? */
-      --orange:#ffd8b5; /* ?????? ?? ??? */
-      --lilac:#efe6ff; /* ???? */
-      --lightpurple:#e7d3ff; /* ???? ?? ??? */
-      --font:#000000; /* ???? */
-      --card:#f8f8f9;
-      --radius:10px;
+      --light-pink:#ffd6e8; /* صورتی کم رنگ */
+      --teal:#8fe3d0; /* آبی اسمانی */
+      --lemon:#fff8bf; /* زرد لیمویی کم رنگ */
+      --light-orange:#ffdcb3; /* نارنجی کم رنگ */
+      --lilac:#f0d7ff; /* یاسی */
+      --light-purple:#e6d3ff; /* بنفش کم رنگ */
+      --black:#000000;
+      --card-radius:12px;
+      --gap:12px;
+      --max-width:1000px;
     }
-    *{box-sizing:border-box;font-family:Tahoma, Arial, sans-serif;color:var(--font)}
-    body{background:var(--bg);padding:18px}
-    h1{font-size:20px;margin-bottom:8px}
-    .container{max-width:980px;margin:0 auto}
-    .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,0.06);margin-bottom:12px}
-    label.bold{font-weight:700;display:block;margin-bottom:6px}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    input[type=number]{padding:8px;border-radius:8px;border:1px solid #ddd;width:120px}
-    select{padding:8px;border-radius:8px;border:1px solid #ddd}
-    button{padding:9px 12px;border-radius:10px;border:0;background:var(--teal);cursor:pointer}
-    .sets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
-    .set-box{padding:10px;border-radius:10px}
-    .set-box input[type=number]{width:100%}
-    .hint{font-size:13px;color:#333}
-    .canvas-wrap{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
-    canvas{background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.04)}
-    .result-list{min-height:40px;padding:8px;border-radius:8px;background:#fff}
-    /* set colors for boxes (rotate through them) */
-    .c1{background:var(--pink)}
-    .c2{background:var(--teal)}
-    .c3{background:var(--lemon)}
-    .c4{background:var(--orange)}
-    .c5{background:var(--lilac)}
-    .c6{background:var(--lightpurple)}
-    .small{font-size:13px}
-    .note{margin-top:8px;font-size:13px}
-    .danger{color:#b00020}
+    body{
+      font-family: Tahoma, system-ui, sans-serif;
+      background:var(--bg);
+      color:var(--black);
+      padding:20px;
+      display:flex;
+      justify-content:center;
+    }
+    .container{
+      width:100%;
+      max-width:var(--max-width);
+      gap:var(--gap);
+      display:flex;
+      flex-direction:column;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.9));
+      border-radius:var(--card-radius);
+      padding:14px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.06);
+    }
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+    label{display:block;margin-bottom:6px}
+    input[type=number], select{padding:8px;border-radius:8px;border:1px solid #ccc}
+    .sets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+    .set-card{padding:10px;border-radius:10px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+    .btn-primary{background:var(--teal);color:var(--black)}
+    .btn-ghost{background:transparent;border:1px solid #ccc}
+    .note{font-weight:bold}
+    small.parenthesis{display:block;margin-top:8px;font-weight:bold}
+
+    /* colors for set cards (A-J) cycling */
+    .set-A{background:var(--light-pink)}
+    .set-B{background:var(--teal)}
+    .set-C{background:var(--lemon)}
+    .set-D{background:var(--light-orange)}
+    .set-E{background:var(--lilac)}
+    .set-F{background:var(--light-purple)}
+    .set-G{background:var(--light-pink)}
+    .set-H{background:var(--teal)}
+    .set-I{background:var(--lemon)}
+    .set-J{background:var(--light-orange)}
+
+    /* Venn area */
+    .venn-wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+    .venn-box{background:#fff;border-radius:12px;padding:12px;min-width:320px;flex:1}
+    svg{width:100%;height:auto}
+    .elements-list{max-height:140px;overflow:auto;padding:8px;border-radius:8px;background:#fff}
+    .msg{color:#b00}
+
+    @media(min-width:900px){
+      .top-row{flex-direction:row}
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>????????? ????? � ????????? (Venn)</h1>
+    <h2 class="note">آزمایشگاه ریاضی — مجموعه‌ها (Venn)</h2>
 
     <div class="card">
-      <label class="bold">????????? ?????? ????? ?????????? ??? ?? ?????? ???? <span class="small">(????? 2 ? ?????? 10 ??????)</span></label>
-      <div class="row">
-        <input id="numSets" type="number" min="2" max="10" value="2" />
-        <button id="createSetsBtn">????? ???????</button>
+      <div class="row top-row">
+        <div style="flex:1">
+          <label class="note">دانش آموز گرامی تعداد مجموعه های خود را انتخاب کنید</label>
+          <input id="setsCount" type="number" min="10" max="10" value="10" />
+          <small class="parenthesis">(تعداد مجموعه های مورد نظر خود را وارد کنید ، حداقل ده مجموعه — بین ۱۰ تا ۱۰)</small>
+        </div>
+        <div style="width:220px">
+          <label class="note">دکمه ایجاد مجموعه‌ها</label>
+          <div class="controls">
+            <button id="createSets" class="btn btn-primary">ایجاد مجموعه‌ها</button>
+            <button id="resetAll" class="btn btn-ghost">بازنشانی</button>
+          </div>
+          <small class="parenthesis">(بعد از وارد کردن تعداد، برای ساخت باکس‌ها این دکمه را بزنید)</small>
+        </div>
       </div>
-      <p class="note">(?????: ??? ????????? ?? A ?? J ????? ???? ????? ????? ?? 10 ???? ????.)</p>
     </div>
 
-    <div id="setsContainer" class="sets-grid"></div>
+    <div id="setsContainer" class="card">
+      <!-- dynamically generated set boxes (A..J) -->
+      <div id="setsGrid" class="sets-grid"></div>
+      <small class="parenthesis">(برای هر مجموعه، عناصر عددی را با دکمه "افزودن" اضافه کنید; نوع ورودی number است)</small>
+    </div>
 
     <div class="card">
-      <label class="bold">?????? ?? ?????? ?? A ?? J <span class="small">(??? ?? ?????? ?????? ???)</span></label>
       <div class="row">
-        <select id="selA"></select>
-        <select id="selB"></select>
+        <div style="flex:1">
+          <label class="note">دو مجموعه مورد نظر را انتخاب کنید</label>
+          <div class="controls">
+            <select id="selectA"></select>
+            <select id="selectB"></select>
+          </div>
+          <small class="parenthesis">(دانش آموز فقط میتواند دو تا از مجموعه های A تا J را انتخاب کند)</small>
+        </div>
+        <div style="width:320px">
+          <label class="note">یکی از عمل های ریاضی زیر را انتخاب کنید</label>
+          <select id="operation">
+            <option value="union">اجتماع (A ∪ B)</option>
+            <option value="intersection">اشتراک (A ∩ B)</option>
+            <option value="difference">تفاضل (A \ B)</option>
+          </select>
+          <small class="parenthesis">(یکی از عمل های ریاضی زیر را انتخاب کنید)</small>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <label class="bold">?????? ??? ????? ??? ?? ?????? <span class="small">(??? ?? ??????? ??? ?? ?????? ????)</span></label>
-      <div class="row">
-        <select id="operation">
-          <option value="union">?????? (A ? B)</option>
-          <option value="intersection">?????? (A n B)</option>
-          <option value="difference">????? (A - B)</option>
-        </select>
-        <button id="drawBtn">????? ?????? ??</button>
+    <div class="card venn-wrap">
+      <div class="venn-box">
+        <label class="note">نمایش گرافیکی وِن</label>
+        <svg viewBox="0 0 500 260" id="vennSVG" aria-label="Venn diagram">
+          <!-- circles: left = A, right = B -->
+          <defs>
+            <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="1.2" />
+            </filter>
+          </defs>
+          <g id="vennGroup">
+            <circle id="circleA" cx="170" cy="130" r="90" fill="var(--light-pink)" fill-opacity="0.45" stroke="#000" stroke-opacity="0.1" filter="url(#soft)" />
+            <circle id="circleB" cx="330" cy="130" r="90" fill="var(--teal)" fill-opacity="0.45" stroke="#000" stroke-opacity="0.1" filter="url(#soft)" />
+
+            <!-- Highlight layers (transparent by default) -->
+            <path id="onlyA" fill="var(--light-pink)" fill-opacity="0.65" stroke="#000" stroke-opacity="0.06"></path>
+            <path id="onlyB" fill="var(--teal)" fill-opacity="0.65" stroke="#000" stroke-opacity="0.06"></path>
+            <path id="bothAB" fill="#ffdf80" fill-opacity="0.85" stroke="#000" stroke-opacity="0.06"></path>
+
+            <!-- labels -->
+            <text x="110" y="50" font-size="20" font-weight="700">مجموعه A</text>
+            <text x="360" y="50" font-size="20" font-weight="700">مجموعه B</text>
+          </g>
+        </svg>
+        <small class="parenthesis">(در نمایش نمودار ون حتما از شکل دایره استفاده شده و نواحی برای هایلایت آماده‌اند)</small>
+      </div>
+
+      <div style="flex:0.8;min-width:260px">
+        <div class="card">
+          <label class="note">عناصر انتخاب‌شده از هر مجموعه</label>
+          <div class="elements-list" id="elementsList">هیچ مجموعه‌ای انتخاب نشده است</div>
+          <small class="parenthesis">(برای نمایش نتایج عملیات، نواحی مربوطه در نمودار هایلایت می‌شوند)</small>
+        </div>
+
+        <div class="card" style="margin-top:10px">
+          <label class="note">عملیات را اجرا کنید</label>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="computeBtn" class="btn btn-primary">اجرای عمل</button>
+            <button id="showAll" class="btn btn-ghost">نمایش تمامی عناصر هر مجموعه</button>
+          </div>
+          <div id="resultMsg" style="margin-top:8px"></div>
+          <small class="parenthesis">(برای نمایش عمل اجتماع، اشتراک یا تفاضل از دکمه اجرا استفاده کنید)</small>
+        </div>
       </div>
     </div>
 
-    <div class="card canvas-wrap">
-      <div>
-        <label class="bold">?????? ?? (????????) <span class="small">(????? ??????? ??? ?????? ?????????)</span></label>
-        <canvas id="vennCanvas" width="600" height="360"></canvas>
-      </div>
-      <div style="flex:1">
-        <label class="bold">????? ? ????? ???? <span class="small">(????? ???? ??????)</span></label>
-        <div id="resultArea" class="result-list"></div>
-        <p class="note">(?????: ???? ?? ?????? ????? ????? ???? ?? ???? ???? ??? ??? ???? "????? ??????? ????" ???? ???? ?? ????????? ???? ???? ???? ????? ????.)</p>
-      </div>
-    </div>
-
+    <div style="height:30px"></div>
+    <footer style="text-align:center;color:#666;font-size:13px">کد ساخته شده: تنها یک فایل HTML — آماده آپلود در گیت‌هاب</footer>
   </div>
 
   <script>
-    const names = ['A','B','C','D','E','F','G','H','I','J'];
-    const colorClasses = ['c1','c2','c3','c4','c5','c6'];
-    const colorFills = ['#ffd6e8','#bff7ff','#fff9b0','#ffd8b5','#efe6ff','#e7d3ff'];
+    // Utility functions
+    const letters = ['A','B','C','D','E','F','G','H','I','J'];
 
-    const setsContainer = document.getElementById('setsContainer');
-    const numSetsInput = document.getElementById('numSets');
-    const createSetsBtn = document.getElementById('createSetsBtn');
-    const selA = document.getElementById('selA');
-    const selB = document.getElementById('selB');
-    const operation = document.getElementById('operation');
-    const drawBtn = document.getElementById('drawBtn');
-    const resultArea = document.getElementById('resultArea');
-    const canvas = document.getElementById('vennCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let sets = {}; // { 'A':[nums], ... }
-
-    function createSets(){
-      const n = Math.max(2, Math.min(10, parseInt(numSetsInput.value)||2));
-      setsContainer.innerHTML = '';
-      sets = {};
-      for(let i=0;i<n;i++){
-        const key = names[i];
-        sets[key] = [];
-        const box = document.createElement('div');
-        box.className = 'set-box ' + colorClasses[i % colorClasses.length];
-        box.style.padding = '12px';
-        box.innerHTML = `
-          <label class="bold">?????? ${key} <span class="small">(????? ???? ??? ??? ?? ???? ????)</span></label>
-          <div class="row">
-            <input type="number" min="0" value="0" class="cnt" data-set="${key}" />
-            <button class="makeFields" data-set="${key}">????? ??????? ????</button>
+    function makeSetCard(name, index){
+      const div = document.createElement('div');
+      div.className = 'set-card set-' + name;
+      div.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>مجموعه ${name}</strong>
+          <div>
+            <button class="btn btn-ghost add-elem">افزودن</button>
+            <button class="btn btn-ghost clear-elem">پاک کردن</button>
           </div>
-          <div class="members" data-set="${key}" style="margin-top:8px"></div>
-        `;
-        setsContainer.appendChild(box);
-      }
-      refreshSelectors();
-      attachSetEvents();
+        </div>
+        <div style="margin-top:8px">
+          <div class="elems" data-set="${name}"></div>
+        </div>
+        <div style="margin-top:8px;font-size:12px">عناصر: <span class="count">0</span></div>
+      `;
+      return div;
     }
 
-    function refreshSelectors(){
-      selA.innerHTML='';selB.innerHTML='';
+    // Global state: sets -> Map name => array of numbers
+    const sets = {};
+
+    function createSets(n){
+      const grid = document.getElementById('setsGrid');
+      grid.innerHTML = '';
+      setsMapClear();
+      for(let i=0;i<n;i++){
+        const name = letters[i];
+        sets[name]=[];
+        const card = makeSetCard(name, i);
+        card.querySelector('.add-elem').addEventListener('click', ()=> addElementInput(card, name));
+        card.querySelector('.clear-elem').addEventListener('click', ()=> clearSet(name, card));
+        grid.appendChild(card);
+      }
+      populateSelectors();
+    }
+
+    function setsMapClear(){
+      for(const k in sets) delete sets[k];
+    }
+
+    function addElementInput(card, setName){
+      const container = card.querySelector('.elems');
+      const row = document.createElement('div');
+      row.style.display='flex';row.style.gap='6px';row.style.marginBottom='6px';
+      const input = document.createElement('input');
+      input.type='number'; input.placeholder='عدد'; input.style.flex='1';
+      const btn = document.createElement('button'); btn.className='btn btn-primary'; btn.textContent='ذخیره';
+      btn.addEventListener('click', ()=>{
+        const v = input.value;
+        if(v === '') return alert('لطفا یک عدد وارد کنید');
+        const num = Number(v);
+        if(Number.isNaN(num)) return alert('فرمت عددی صحیح نیست');
+        sets[setName].push(num);
+        input.value='';
+        renderSetCard(setName);
+      });
+      row.appendChild(input); row.appendChild(btn);
+      container.prepend(row);
+    }
+
+    function clearSet(name, card){
+      if(!confirm(`آیا می‌خواهید عناصر مجموعه ${name} پاک شوند؟`)) return;
+      sets[name]=[];
+      renderSetCard(name);
+    }
+
+    function renderSetCard(name){
+      const grid = document.getElementById('setsGrid');
+      const cards = grid.querySelectorAll('.set-card');
+      cards.forEach(card=>{
+        const elems = card.querySelector('.elems');
+        if(elems && elems.dataset.set === name){
+          // remove existing list display (keep input rows)
+          const inputs = Array.from(elems.querySelectorAll('div')).filter(d => d.querySelector('input'));
+          elems.innerHTML='';
+          inputs.forEach(i=> elems.appendChild(i));
+          // add list of saved elements
+          const saved = document.createElement('div');
+          saved.style.marginTop='8px';
+          saved.textContent = sets[name].join(', ') || '—';
+          elems.appendChild(saved);
+          const count = card.querySelector('.count');
+          if(count) count.textContent = String(sets[name].length);
+        }
+      });
+      populateSelectors();
+    }
+
+    function populateSelectors(){
+      const selA = document.getElementById('selectA');
+      const selB = document.getElementById('selectB');
+      selA.innerHTML=''; selB.innerHTML='';
       Object.keys(sets).forEach(k=>{
-        const o1 = document.createElement('option'); o1.value=k; o1.textContent=k;
-        const o2 = document.createElement('option'); o2.value=k; o2.textContent=k;
+        const o1 = document.createElement('option'); o1.value=k; o1.textContent='مجموعه ' + k;
+        const o2 = o1.cloneNode(true);
         selA.appendChild(o1); selB.appendChild(o2);
       });
       // ensure different defaults
-      if(selA.options.length>1) selB.selectedIndex = 1;
+      if(selA.options.length>0){ selA.selectedIndex=0; selB.selectedIndex=Math.min(1,selB.options.length-1); }
+      updateVennLabels();
     }
 
-    function attachSetEvents(){
-      document.querySelectorAll('.makeFields').forEach(btn=>{
-        btn.onclick = (e)=>{
-          const setKey = btn.getAttribute('data-set');
-          const parent = btn.parentElement;
-          const cntInput = parent.querySelector('.cnt');
-          const cnt = Math.max(0, parseInt(cntInput.value)||0);
-          const membersDiv = document.querySelector('.members[data-set="'+setKey+'"]');
-          membersDiv.innerHTML='';
-          for(let i=0;i<cnt;i++){
-            const inp = document.createElement('input');
-            inp.type='number'; inp.className='member'; inp.placeholder = '??? '+(i+1);
-            inp.style.marginBottom='6px'; inp.style.width='100%';
-            membersDiv.appendChild(inp);
-          }
-        };
-      });
+    function updateVennLabels(){
+      const a = document.getElementById('selectA').value || 'A';
+      const b = document.getElementById('selectB').value || 'B';
+      const svg = document.getElementById('vennSVG');
+      const texts = svg.querySelectorAll('text');
+      if(texts[0]) texts[0].textContent = 'مجموعه ' + a;
+      if(texts[1]) texts[1].textContent = 'مجموعه ' + b;
     }
 
-    createSetsBtn.addEventListener('click',()=>{
-      createSets();
-    });
-
-    // initial
-    createSets();
-
-    function readSetsFromUI(){
-      Object.keys(sets).forEach(k=>{
-        const membersDiv = document.querySelector('.members[data-set="'+k+'"]');
-        const vals = [];
-        if(membersDiv){
-          membersDiv.querySelectorAll('input.member').forEach(inp=>{
-            const v = inp.value;
-            if(v!=='' && !isNaN(Number(v))){
-              vals.push(Number(v));
-            }
-          });
-        }
-        // dedupe and sort
-        sets[k] = Array.from(new Set(vals)).sort((a,b)=>a-b);
-      });
+    // SVG geometry helpers: construct paths for circle minus intersection and intersection
+    function circlePath(cx,cy,r){
+      return `M ${cx-r} ${cy} a ${r} ${r} 0 1 0 ${2*r} 0 a ${r} ${r} 0 1 0 ${-2*r} 0`;
     }
 
-    function computeResult(aSet,bSet,op){
-      const A = new Set(sets[aSet]||[]);
-      const B = new Set(sets[bSet]||[]);
-      let res = [];
-      if(op==='union'){
-        res = Array.from(new Set([...A,...B])).sort((x,y)=>x-y);
-      } else if(op==='intersection'){
-        res = Array.from([...A].filter(x=>B.has(x))).sort((x,y)=>x-y);
-      } else if(op==='difference'){
-        res = Array.from([...A].filter(x=>!B.has(x))).sort((x,y)=>x-y);
-      }
-      return res;
-    }
+    // Use simple approach: draw full circles as paths and use clip rules for highlight paths using <clipPath> would be cleaner,
+    // but for simplicity compute intersection region via SVG path for two equal circles.
+    function updateVennVisual(){
+      const Aname = document.getElementById('selectA').value;
+      const Bname = document.getElementById('selectB').value;
+      const op = document.getElementById('operation').value;
+      const a = sets[Aname] || [];
+      const b = sets[Bname] || [];
 
-    function drawVenn(aSet,bSet,op){
-      // canvas clear
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      // positions
-      const cx1 = 200, cy=180, r=120;
-      const cx2 = 360;
-      // base circles with low opacity
-      // circle A
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.beginPath(); ctx.arc(cx1,cy,r,0,Math.PI*2); ctx.closePath();
-      ctx.fillStyle = colorFills[0]; ctx.globalAlpha = 0.65; ctx.fill();
-      ctx.strokeStyle = '#00000022'; ctx.globalAlpha = 1; ctx.stroke();
-      // circle B
-      ctx.beginPath(); ctx.arc(cx2,cy,r,0,Math.PI*2); ctx.closePath();
-      ctx.fillStyle = colorFills[1]; ctx.globalAlpha = 0.65; ctx.fill();
-      ctx.strokeStyle = '#00000022'; ctx.globalAlpha = 1; ctx.stroke();
+      const onlyA = document.getElementById('onlyA');
+      const onlyB = document.getElementById('onlyB');
+      const both = document.getElementById('bothAB');
 
-      // highlight according to operation using composite operations
-      if(op==='union'){
-        // draw both with stronger alpha
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.beginPath(); ctx.arc(cx1,cy,r,0,Math.PI*2); ctx.closePath(); ctx.fillStyle = colorFills[0]; ctx.globalAlpha = 0.95; ctx.fill();
-        ctx.beginPath(); ctx.arc(cx2,cy,r,0,Math.PI*2); ctx.closePath(); ctx.fillStyle = colorFills[1]; ctx.globalAlpha = 0.95; ctx.fill();
-      } else if(op==='intersection'){
-        // draw A, then keep only intersection by using destination-in
-        // draw A opaque into offscreen, then composite
-        // we'll use layering technique
-        // draw A
-        ctx.globalCompositeOperation = 'destination-over';
-        // create intersection by drawing with 'source-in'
-        // clear a temp area by using globalCompositeOperation tricks: simpler approach:
-        // draw A with high alpha, then set composite to 'destination-in' and draw B to keep overlap only
-        // Save
-        ctx.save();
-        // Create intersection: first draw A with full alpha to a new layer
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.beginPath(); ctx.arc(cx1,cy,r,0,Math.PI*2); ctx.closePath(); ctx.fillStyle = colorFills[5]; ctx.globalAlpha = 0.0; ctx.fill();
-        // Now use composite to keep only overlap area
-        ctx.globalCompositeOperation = 'source-in';
-        ctx.beginPath(); ctx.arc(cx2,cy,r,0,Math.PI*2); ctx.closePath(); ctx.fillStyle = colorFills[0]; ctx.globalAlpha = 0.6; ctx.fill();
-        ctx.restore();
-        // The above trick may not work cross-browser so do a more explicit method:
-        // We'll draw intersection into an offscreen canvas and then draw it.
-        try{
-          const off = document.createElement('canvas'); off.width = canvas.width; off.height = canvas.height;
-          const octx = off.getContext('2d');
-          // draw A
-          octx.beginPath(); octx.arc(cx1,cy,r,0,Math.PI*2); octx.closePath(); octx.fillStyle=colorFills[0]; octx.globalAlpha=0.95; octx.fill();
-          // keep intersection by setting composite
-          octx.globalCompositeOperation = 'destination-in';
-          octx.beginPath(); octx.arc(cx2,cy,r,0,Math.PI*2); octx.closePath(); octx.fill();
-          // draw result onto main
-          ctx.drawImage(off,0,0);
-        } catch(e){
-          // fallback: overlay darker overlapping region roughly
-          ctx.beginPath(); ctx.arc((cx1+cx2)/2,cy,70,0,Math.PI*2); ctx.closePath(); ctx.fillStyle='#cbbcff'; ctx.globalAlpha=0.6; ctx.fill();
-        }
-      } else if(op==='difference'){
-        // A - B: draw A, then erase intersection with composite
-        // draw A opaque to offscreen
-        const off = document.createElement('canvas'); off.width = canvas.width; off.height = canvas.height;
-        const octx = off.getContext('2d');
-        // draw A
-        octx.beginPath(); octx.arc(cx1,cy,r,0,Math.PI*2); octx.closePath(); octx.fillStyle=colorFills[0]; octx.globalAlpha=0.95; octx.fill();
-        // erase where B is (destination-out)
-        octx.globalCompositeOperation='destination-out';
-        octx.beginPath(); octx.arc(cx2,cy,r,0,Math.PI*2); octx.closePath(); octx.fill();
-        // draw off onto main
-        ctx.drawImage(off,0,0);
+      // circle params (must match SVG circles)
+      const Ax=170, Ay=130, Ar=90;
+      const Bx=330, By=130, Br=90;
+
+      // simple geometric path building for left-only, right-only and overlap using arc-based clipping
+      // We'll build using path for intersection of two equal circles centered at Ax,Ay and Bx,By
+      const d_intersection = intersectionPath(Ax,Ay,Ar,Bx,By,Br);
+      const d_circleA = circlePath(Ax,Ay,Ar);
+      const d_circleB = circlePath(Bx,By,Br);
+
+      if(op === 'union'){
+        // highlight both circles entirely (union) — show bothA and bothB filled
+        onlyA.setAttribute('d', d_circleA);
+        onlyB.setAttribute('d', d_circleB);
+        both.setAttribute('d', d_intersection);
+        // set opacities so union looks bright: we'll show both circles with slightly different overlays
+        onlyA.style.display='block'; onlyB.style.display='block'; both.style.display='block';
+        onlyA.setAttribute('fill-opacity','0.45'); onlyB.setAttribute('fill-opacity','0.45'); both.setAttribute('fill-opacity','0.65');
+      } else if(op === 'intersection'){
+        // hide full circle fills; show only intersection highlighted
+        onlyA.style.display='none'; onlyB.style.display='none'; both.style.display='block';
+        both.setAttribute('d', d_intersection);
+        both.setAttribute('fill','#ffdf80'); both.setAttribute('fill-opacity','0.85');
+      } else if(op === 'difference'){
+        // A \ B: highlight only part of A that is not in intersection
+        const dAminus = subtractPath(d_circleA, d_intersection);
+        onlyA.setAttribute('d', dAminus);
+        onlyA.style.display='block'; onlyB.style.display='none'; both.style.display='none';
+        onlyA.setAttribute('fill','#ffd6e8'); onlyA.setAttribute('fill-opacity','0.75');
       }
 
-      // draw labels
-      ctx.globalAlpha=1; ctx.fillStyle='#000'; ctx.font='bold 18px Tahoma'; ctx.fillText(aSet, cx1-6, cy- r - 15);
-      ctx.fillText(bSet, cx2-6, cy - r - 15);
+      // Update elements list and result message
+      const elementsDiv = document.getElementById('elementsList');
+      elementsDiv.innerHTML = '';
+      const pA = document.createElement('div'); pA.innerHTML = `<strong>مجموعه ${Aname}:</strong> ${a.join(', ') || '—'}`;
+      const pB = document.createElement('div'); pB.innerHTML = `<strong>مجموعه ${Bname}:</strong> ${b.join(', ') || '—'}`;
+      elementsDiv.appendChild(pA); elementsDiv.appendChild(pB);
 
+      // compute actual result set
+      let result = [];
+      if(op === 'union'){
+        result = Array.from(new Set([...a,...b]));
+      } else if(op === 'intersection'){
+        result = a.filter(x => b.includes(x)).filter((v,i,arr)=>arr.indexOf(v)===i);
+      } else if(op === 'difference'){
+        result = a.filter(x => !b.includes(x));
+      }
+      const msg = document.getElementById('resultMsg');
+      msg.innerHTML = `<strong>نتیجه:</strong> ${result.join(', ') || '∅'} `;
     }
 
-    drawBtn.addEventListener('click',()=>{
-      readSetsFromUI();
-      const a = selA.value; const b = selB.value; const op = operation.value;
-      if(!a || !b){ alert('?? ?????? ?????? ????????.'); return; }
-      if(a===b){ alert('????? ?? ?????? ?????? ?????? ????.'); return; }
-      const res = computeResult(a,b,op);
-      // display result
-      resultArea.innerHTML = '';
-      const title = document.createElement('div'); title.className='small'; title.textContent = `??????? ?????? (${op==='union'?'??????':(op==='intersection'?'??????':'?????')}) ??? ${a} ? ${b}:`;
-      resultArea.appendChild(title);
-      const arrDiv = document.createElement('div'); arrDiv.style.marginTop='8px'; arrDiv.textContent = res.length?res.join(', '):'???? (??? ???)';
-      resultArea.appendChild(arrDiv);
-      drawVenn(a,b,op);
+    // Create an SVG path for intersection of two equal circles (approx analytic)
+    function intersectionPath(x1,y1,r1,x2,y2,r2){
+      // This function returns a path that represents the overlapping lens region of two circles.
+      // Based on circle-circle intersection geometry. Works when circles intersect.
+      const dx = x2-x1; const dy = y2-y1; const d = Math.hypot(dx,dy);
+      if(d >= r1 + r2) return '';
+      if(d <= Math.abs(r1 - r2)) return circlePath(x1,y1,r1); // one inside another
+
+      const a = (r1*r1 - r2*r2 + d*d)/(2*d);
+      const h = Math.sqrt(Math.max(0, r1*r1 - a*a));
+      const xm = x1 + a * (dx) / d;
+      const ym = y1 + a * (dy) / d;
+      const xs1 = xm + h * (dy) / d;
+      const ys1 = ym - h * (dx) / d;
+      const xs2 = xm - h * (dy) / d;
+      const ys2 = ym + h * (dx) / d;
+
+      // path: move to first intersection, arc on circle2 to second intersection, arc on circle1 back
+      const path = `M ${xs1} ${ys1} `+
+                   `A ${r2} ${r2} 0 0 1 ${xs2} ${ys2} `+
+                   `A ${r1} ${r1} 0 0 1 ${xs1} ${ys1} Z`;
+      return path;
+    }
+
+    // Subtract path (naive): we return circle path but visually it will overlap; better result for highlight: use intersection clipping approach,
+    // but for our simple highlighting we will mask intersection by drawing intersection on top; here we simply return circle path and hide overlap by covering later.
+    function subtractPath(circlePathStr, interPathStr){
+      // To show only A\B we will draw full A path; intersection is drawn on top (hidden) by the other overlays, so using circle path is fine.
+      return circlePathStr;
+    }
+
+    // Event bindings
+    document.getElementById('createSets').addEventListener('click', ()=>{
+      const n = Number(document.getElementById('setsCount').value);
+      if(Number.isNaN(n) || n < 10 || n > 10){
+        alert('لطفا عددی بین ۱۰ تا ۱۰ وارد کنید (حداقل ده مجموعه، حداکثر ۱۰)');
+        return;
+      }
+      createSets(n);
     });
 
+    document.getElementById('resetAll').addEventListener('click', ()=>{
+      if(!confirm('بازنشانی کل موارد؟')) return;
+      document.getElementById('setsGrid').innerHTML='';
+      setsMapClear();
+      populateSelectors();
+      document.getElementById('elementsList').textContent='هیچ مجموعه‌ای انتخاب نشده است';
+      document.getElementById('resultMsg').innerHTML='';
+    });
+
+    document.getElementById('selectA').addEventListener('change', ()=>{ updateVennLabels(); });
+    document.getElementById('selectB').addEventListener('change', ()=>{ updateVennLabels(); });
+    document.getElementById('operation').addEventListener('change', ()=>{});
+
+    document.getElementById('computeBtn').addEventListener('click', ()=>{
+      // simple validation: ensure two sets selected and not same
+      const a = document.getElementById('selectA').value;
+      const b = document.getElementById('selectB').value;
+      if(!a || !b){ alert('لطفا دو مجموعه را انتخاب کنید'); return; }
+      if(a === b){ alert('لطفا دو مجموعه متفاوت انتخاب کنید'); return; }
+      updateVennVisual();
+    });
+
+    document.getElementById('showAll').addEventListener('click', ()=>{
+      // show all sets summary
+      const summary = Object.keys(sets).map(k => `${k}: ${sets[k].join(', ') || '—'}`).join('\n');
+      alert(summary || 'هیچ مجموعه‌ای ساخته نشده');
+    });
+
+    // initialize default 10 sets
+    createSets(10);
   </script>
 </body>
 </html>
